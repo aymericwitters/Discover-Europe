@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discover Europe</title>
+    <style>
+        body { font-family: Arial; margin:0; background:#f2f2f2; text-align:center;}
+        header { color:white; padding:30px; border-bottom:5px solid #ffd700; }
+        header h1 { font-size:2.5em; margin:10px 0; text-shadow:1px 1px 2px #000;}
+        .landen-nav { margin:15px 0; }
+        .landen-nav button { margin:5px; padding:10px 18px; border-radius:8px; border:2px solid #ffd700; background:#003399; color:#ffd700; font-size:16px; cursor:pointer; transition: all 0.3s; font-weight:bold; }
+        .landen-nav button:hover { background:#ffd700; color:#003399; transform: scale(1.1);}
+        .provincies { margin:20px; }
+        .provincies button { margin:8px; padding:12px 20px; border-radius:10px; border:2px solid #ffd700; background:#ff0000; color:white; font-size:16px; cursor:pointer; transition:all 0.3s;}
+        .provincies button:hover { background:#ffd700; color:#000; transform:scale(1.1); box-shadow:0 5px 15px rgba(0,0,0,0.3);}
+        .info { background:white; margin:25px auto; padding:25px; width:70%; border-radius:12px; box-shadow:0 0 15px rgba(0,0,0,0.2); transition: transform 0.4s, box-shadow 0.4s; }
+        .info:hover { transform:translateY(-5px); box-shadow:0 10px 25px rgba(0,0,0,0.3);}
+    </style>
+</head>
+<body>
+
+<header id="header">
+    <h1>Discover Europe</h1>
+    <p>Kies eerst een land en daarna een provincie/gebied</p>
+</header>
+
+<nav class="landen-nav">
+    <button onclick="toonLand('België')">★ België ★</button>
+    <button onclick="toonLand('Nederland')">★ Nederland ★</button>
+    <button onclick="toonLand('Frankrijk')">★ Frankrijk ★</button>
+    <button onclick="toonLand('Duitsland')">★ Duitsland ★</button>
+    <button onclick="toonLand('EU')">★ Europa ★</button>
+</nav>
+
+<main>
+    <div id="provincies-container" class="provincies"></div>
+    <div id="info" class="info"><p>Kies een land en daarna een provincie/gebied 👆</p></div>
+</main>
+
+<script>
+const landen = {
+    "België":["Antwerpen","Oost-Vlaanderen","West-Vlaanderen","Vlaams-Brabant","Limburg","Henegouwen","Luik","Namen","Luxemburg","Waals-Brabant"],
+    "Nederland":["Noord-Holland","Zuid-Holland","Utrecht","Gelderland","Limburg","Overijssel","Flevoland","Friesland","Drenthe","Groningen","Zeeland","Noord-Brabant"],
+    "Frankrijk":["Île-de-France","Provence-Alpes-Côte d’Azur","Nouvelle-Aquitaine","Occitanie","Auvergne-Rhône-Alpes"],
+    "Duitsland":["Bayern","Nordrhein-Westfalen","Baden-Württemberg","Hessen","Sachsen"],
+    "EU":[]
+};
+
+const infoData = {
+    "Antwerpen":"Antwerpen is de grootste haven van België en bekend om diamanten.",
+    "Oost-Vlaanderen":"Oost-Vlaanderen heeft Gent, historische stad en Vlaamse Ardennen.",
+    "West-Vlaanderen":"West-Vlaanderen ligt aan de kust met Brugge en Oostende.",
+    "Vlaams-Brabant":"Vlaams-Brabant heeft Leuven, kastelen en Hageland.",
+    "Limburg":"Limburg is groen, Hasselt, Nationaal Park Hoge Kempen.",
+    "Henegouwen":"Henegouwen: Charleroi, Bergen (Mons) en bossen van Chimay.",
+    "Luik":"Luik: stad Luik en Ardennen voor outdoor activiteiten.",
+    "Namen":"Namen: citadel, rivieren Maas en Samber, kastelen.",
+    "Luxemburg":"Luxemburg: Ardennen, bossen, Durbuy, perfect voor wandelen.",
+    "Waals-Brabant":"Waals-Brabant: Wavre, Waterloo, kastelen en wandelroutes.",
+    "Noord-Holland":"Noord-Holland: Amsterdam, Haarlem, grachten en tulpenvelden.",
+    "Zuid-Holland":"Zuid-Holland: Den Haag, Rotterdam, cultuur en strand.",
+    "Utrecht":"Utrecht: historische binnenstad en gezellige grachten.",
+    "Gelderland":"Gelderland: Veluwe, natuur voor wandelen en fietsen.",
+    "Overijssel":"Overijssel: historische steden en mooie natuurgebieden.",
+    "Flevoland":"Flevoland: polders, moderne steden zoals Lelystad.",
+    "Friesland":"Friesland: meren, wateractiviteiten, Leeuwarden.",
+    "Drenthe":"Drenthe: hunebedden, bossen en rustige natuur.",
+    "Groningen":"Groningen: studentenstad, musea en levendig centrum.",
+    "Zeeland":"Zeeland: stranden, waterwerken en pittoreske dorpjes.",
+    "Noord-Brabant":"Noord-Brabant: steden zoals Eindhoven en Breda, gezellige sfeer.",
+    "Île-de-France":"Île-de-France bevat Parijs, de Eiffeltoren en musea.",
+    "Provence-Alpes-Côte d’Azur":"Bekend om zon, stranden, lavendelvelden en Côte d’Azur.",
+    "Nouvelle-Aquitaine":"Bordeaux, wijn, stranden en middeleeuwse stadjes.",
+    "Occitanie":"Toulouse, Pyreneeën en prachtige natuurgebieden.",
+    "Auvergne-Rhône-Alpes":"Alpen, Lyon en outdoor activiteiten zoals skiën en wandelen.",
+    "Bayern":"Bayern: München, Alpen, Neuschwanstein en biertradities.",
+    "Nordrhein-Westfalen":"NRW: Keulen, Düsseldorf, cultuur en industriegeschiedenis.",
+    "Baden-Württemberg":"Stuttgart, Zwarte Woud en mooie natuurgebieden.",
+    "Hessen":"Frankfurt, financiële stad en heuvelachtige natuur.",
+    "Sachsen":"Dresden en Leipzig, barokke steden en culturele historie."
+};
+
+const landKleuren = {
+    "België":["#000000","#FFD700","#FF0000"],
+    "Nederland":["#21468B","#FFFFFF","#AE1C28"],
+    "Frankrijk":["#0055A4","#FFFFFF","#EF4135"],
+    "Duitsland":["#000000","#DD0000","#FFCE00"],
+    "EU":["#003399","#003399","#003399"]
+};
+
+function toonLand(land){
+    const container = document.getElementById("provincies-container");
+    container.innerHTML="";
+    landen[land].forEach(p=>{
+        const btn=document.createElement("button");
+        btn.textContent=p;
+        btn.onclick=()=>toonInfo(p);
+        container.appendChild(btn);
+    });
+    document.getElementById("info").innerHTML=`<p>Kies een provincie/gebied in ${land} 👆</p>`;
+    const header=document.getElementById("header");
+    const kleuren=landKleuren[land];
+    if(land==="België"||land==="Duitsland"||land==="Nederland"||land==="Frankrijk"){
+        header.style.background=`linear-gradient(to right, ${kleuren[0]}, ${kleuren[1]}, ${kleuren[2]})`;
+    }else{
+        header.style.background=kleuren[0];
+    }
+}
+
+function toonInfo(p){
+    document.getElementById("info").innerHTML=`<h2>${p}</h2><p>${infoData[p]}</p>`;
+}
+</script>
+
+</body>
+</html>
